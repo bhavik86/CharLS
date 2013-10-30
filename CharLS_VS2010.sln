@@ -13,29 +13,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Convert", "samples\convert\Convert.csproj", "{19337FF7-ADE8-4D18-8998-6B03C8B6A630}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 7
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = CharLS.vcxproj
-		SccLocalPath1 = .
-		SccProjectUniqueName2 = plainc\\plainc.vcxproj
-		SccProjectName2 = plainc
-		SccLocalPath2 = plainc
-		SccProjectUniqueName3 = test\\test.vcxproj
-		SccProjectName3 = test
-		SccLocalPath3 = test
-		SccProjectUniqueName4 = net\\CharLSNet.csproj
-		SccProjectName4 = net
-		SccLocalPath4 = net
-		SccProjectUniqueName5 = nettest\\CharLSNetTest.csproj
-		SccProjectName5 = nettest
-		SccLocalPath5 = nettest
-		SccProjectUniqueName6 = samples\\convert\\Convert.csproj
-		SccProjectName6 = samples/convert
-		SccLocalPath6 = samples\\convert
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Checked|Win32 = Checked|Win32
 		Checked|x64 = Checked|x64
