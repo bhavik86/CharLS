@@ -28,3 +28,24 @@ add_library(CharLS header.cpp  interface.cpp  jpegls.cpp  )
 add_executable(charlstest test/main.cpp test/time.cpp test/util.cpp test/bitstreamdamage.cpp test/compliance.cpp test/performance.cpp test/dicomsamples.cpp)
 target_link_libraries (charlstest CharLS)
 
+
+# First thing define the common source:
+set(CharLS_JNI_SRCS
+  charls_jni.cpp
+  )
+
+# JNI binding:
+find_package(JNI REQUIRED)
+include_directories(${JNI_INCLUDE_DIRS})
+
+
+add_library(CharLS_JNI MODULE  ${CharLS_JNI_SRCS} )
+
+# Java module should not have a SONAME:
+set_property(TARGET CharLS_JNI PROPERTY NO_SONAME 1)
+
+target_link_libraries(CharLS_JNI CharLS)
+
+if(UNIX)
+  target_link_libraries(CharLS_JNI m)
+endif()
