@@ -27,13 +27,14 @@ class CharlsBridge {
   private:
 
 	tBufferInfo decodeByStreamsCommon(char *buffer, size_t totalLen);
+	size_t code(char* inputData, size_t inputDataLength, size_t width, size_t height, char* outputData, size_t outputDataLength, size_t bitsPerSample, size_t numComponents);
 	bool catchAndRelease();
 
 	void release();
 
 	JNIEnv* env;
-	char *buf;
-    size_t len;
+	char *compressedBuffer;
+    size_t compressedBufferCapacity;
 
 
 	jobjectArray javaParameters;
