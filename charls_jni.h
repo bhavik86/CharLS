@@ -5,6 +5,10 @@
 #include <jni.h>
 #include <vector>
 
+using namespace std;
+
+
+
 struct tBufferInfo
 {
 	tBufferInfo()
@@ -25,8 +29,7 @@ class CharlsBridge {
 	int decode( jobject obj,jobjectArray javaParameters);
 	int encode( jobject obj,jobjectArray javaParameters);
   private:
-
-	tBufferInfo decodeByStreamsCommon(char *buffer, size_t totalLen);
+	tBufferInfo decode(string fileName, vector<size_t> segmentOffsets, vector<size_t> segmentLengths);
 	size_t code(char* inputData, size_t inputDataLength, size_t width, size_t height, char* outputData, size_t outputDataLength, size_t bitsPerSample, size_t numComponents);
 	bool catchAndRelease();
 

@@ -32,6 +32,7 @@ target_link_libraries (charlstest CharLS)
 # First thing define the common source:
 set(CharLS_JNI_SRCS
   charls_jni.cpp
+  file_buffer.cpp
   )
 
 # JNI binding:

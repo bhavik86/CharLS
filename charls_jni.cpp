@@ -1,6 +1,7 @@
 #include "charls_jni.h"
 #include <iostream>
 #include <fstream>
+#include "file_buffer.h"
 
 using namespace std;
 
@@ -172,45 +173,27 @@ int CharlsBridge::decode(jobject obj,jobjectArray javaParameters)
 
 	if (hasFile)
 	{
-		ifstream myfile;
+
+		vector<size_t> offsets;
+		vector<size_t> lengths;
+
 		int totalLength = 0;
-		try
+		if (numPositions > 0)
 		{
-			myfile.open (argv[0], ios::in | ios::app | ios::binary);
-			if (numPositions > 0)
+			for (int i = 0; i < numPositions; ++i)
 			{
-				for (int i = 0; i < numPositions; ++i)
-				{
-					totalLength += bodySegmentLengths[i];
-				}
-
-				compressedBuffer = new char[totalLength];
-				int dataRead = 0;
-				for (int i = 0; i < numPositions; ++i)
-				{
-					myfile.seekg(bodySegmentPositions[i]);
-					myfile.read((char*)(compressedBuffer + dataRead), bodySegmentLengths[i]);
-					dataRead += bodySegmentLengths[i];
-				}
+				totalLength += bodySegmentLengths[i];
 			}
-			else
+			for (int i = 0; i < numPositions; ++i)
 			{
-				myfile.seekg (0, myfile.end);
-				totalLength = myfile.tellg();
-				myfile.seekg (0, myfile.beg);
-				compressedBuffer = new char[totalLength];
-				myfile.read((char*)(compressedBuffer),totalLength);
+				offsets.push_back(bodySegmentPositions[i]);
+				lengths.push_back(bodySegmentLengths[i]);
 			}
-
-		}
-		catch (...)
-		{
-			myfile.close();
-			release();
-			return -1;
 		}
 
-		tBufferInfo info = decodeByStreamsCommon(compressedBuffer, totalLength);
+
+
+		tBufferInfo info = decode(argv[0], offsets, lengths);
 		if (!info.buffer)
 			return -1;
 
@@ -587,23 +570,25 @@ int CharlsBridge::encode(jobject obj,jobjectArray javaParameters)
 	return compressedLength;
 }
 
-tBufferInfo CharlsBridge::decodeByStreamsCommon(char *buffer, size_t totalLen)
+tBufferInfo  CharlsBridge::decode(string fileName, vector<size_t> segmentOffsets, vector<size_t> segmentLengths)
 {
 	tBufferInfo info;
     JlsParameters metadata = {};
-    if (JpegLsReadHeader(buffer, totalLen, &metadata) != OK)
+	FILE_buffer fileBuffer(fileName, segmentOffsets, segmentLengths); 
+	ByteStreamInfo input;
+	input.rawStream =  &fileBuffer;
+    if (JpegLsReadHeaderStream(input, &metadata) != OK)
     {
 		return info;
     }	
 
     // allowedlossyerror == 0 => Lossless
     bool LossyFlag = metadata.allowedlossyerror!= 0;
-    JlsParameters params = {};
-    JpegLsReadHeader(buffer, totalLen, &params);
 
-	size_t outputSize = params.height *params.width * ((params.bitspersample + 7) / 8) * params.components;
+	size_t outputSize = metadata.height *metadata.width * ((metadata.bitspersample + 7) / 8) * metadata.components;
 	char* rgbOut = new char[outputSize];
-    JLS_ERROR result = JpegLsDecode(rgbOut, outputSize, buffer, totalLen, &params);
+	fileBuffer.reset();
+	JLS_ERROR result = JpegLsDecodeStream(FromByteArray(rgbOut, outputSize), input, &metadata);
 
     if (result != OK)
     {
@@ -614,6 +599,7 @@ tBufferInfo CharlsBridge::decodeByStreamsCommon(char *buffer, size_t totalLen)
 	info.length = outputSize;
 	info.metadata = metadata;
     return info;
+
 }
 
 
