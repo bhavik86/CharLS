@@ -222,6 +222,14 @@ int CharlsBridge::decode(jobject obj,jobjectArray javaParameters)
 		if ( catchAndRelease() == -1)
 			return -1;
 
+		fid = env->GetFieldID(klass, "samplesPerPixel", "I");
+		if ( catchAndRelease() == -1)
+			return -1;
+
+		env->SetIntField(obj, fid, info.metadata.components);
+		if ( catchAndRelease() == -1)
+			return -1;
+
 
 		int width = info.metadata.width;
 		int height = info.metadata.height;
